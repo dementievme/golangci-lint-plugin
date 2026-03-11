@@ -1,0 +1,42 @@
+# loggers.yml
+loggers:
+  log/slog:
+    Debug: true
+    Info: true
+    Warn: true
+    Error: true
+    DebugContext: true
+    InfoContext: true
+    WarnContext: true
+    ErrorContext: true
+
+  go.uber.org/zap:
+    Debug: true
+    Info: true
+    Warn: true
+    Error: true
+    Fatal: true
+    Panic: true
+    Debugf: true
+    Infof: true
+    Warnf: true
+    Errorf: true
+    Fatalf: true
+    Panicf: true
+    Debugw: true
+    Infow: true
+    Warnw: true
+    Errorw: true
+    Fatalw: true
+    Panicw: true
+
+  log:
+    Print: true
+    Printf: true
+    Println: true
+    Fatal: true
+    Fatalf: true
+    Fatalln: true
+    Panic: true
+    Panicf: true
+    Panicln: true
