@@ -9,7 +9,9 @@ import (
 )
 
 type Config struct {
-	Loggers map[string]map[string]bool `yaml:"loggers"`
+	Loggers                map[string]map[string]bool `yaml:"loggers"`
+	ExtraSensitiveKeywords []string                   `yaml:"extra_sensitive_keywords"`
+	DisableRules           []string                   `yaml:"disable_rules"`
 }
 
 func MustLoad() *Config {

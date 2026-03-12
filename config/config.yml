@@ -1,4 +1,13 @@
-# loggers.yml
+# config.yml
+extra_sensitive_keywords:
+  - ssn
+  - credit_card
+  - cvv
+  - phone
+  - address
+
+disable_rules: []
+
 loggers:
   log/slog:
     Debug: true
