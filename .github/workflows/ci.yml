@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # полный clone, чтобы VCS stamping работал, если нужен
+          fetch-depth: 0  # полный clone для VCS stamping
 
       - name: Download dependencies
         run: go mod download
@@ -37,7 +37,7 @@ jobs:
       - name: Build custom golangci-lint
         run: |
           cd plugin
-          golangci-lint custom -c .custom-gcl.yml
+          golangci-lint custom
 
       - name: Run linter
         run: ./custom-gcl run ./...
