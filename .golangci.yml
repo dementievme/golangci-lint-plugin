@@ -1,0 +1,15 @@
+version: "2"
+
+plugins:
+  - module: "github.com/dementievme/golangci-lint-plugin"
+    import: "github.com/dementievme/golangci-lint-plugin/plugin"
+
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+
+run:
+  timeout: 5m

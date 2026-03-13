@@ -1,0 +1,60 @@
+extra_sensitive_keywords:
+  - ssn
+  - credit_card
+  - cvv
+  - phone
+  - address
+  - api_key
+  - api_secret
+  - access_token
+  - refresh_token
+  - client_secret
+  - db_password
+  - connection_string
+  - jwt_secret
+  - webhook_secret
+  - aws_secret
+
+disable_rules: []
+
+loggers:
+  log/slog:
+    Debug: true
+    Info: true
+    Warn: true
+    Error: true
+    DebugContext: true
+    InfoContext: true
+    WarnContext: true
+    ErrorContext: true
+
+  go.uber.org/zap:
+    Debug: true
+    Info: true
+    Warn: true
+    Error: true
+    Fatal: true
+    Panic: true
+    Debugf: true
+    Infof: true
+    Warnf: true
+    Errorf: true
+    Fatalf: true
+    Panicf: true
+    Debugw: true
+    Infow: true
+    Warnw: true
+    Errorw: true
+    Fatalw: true
+    Panicw: true
+
+  log:
+    Print: true
+    Printf: true
+    Println: true
+    Fatal: true
+    Fatalf: true
+    Fatalln: true
+    Panic: true
+    Panicf: true
+    Panicln: true
