@@ -10,11 +10,11 @@ type Validator struct {
 	rules []Rule
 }
 
-func New(config *config.Config) *Validator {
-	keywords := config.ExtraSensitiveKeywords
+func New(cfg *config.Config) *Validator {
+	keywords := cfg.ExtraSensitiveKeywords
 
 	disabled := make(map[string]bool)
-	for _, r := range config.DisableRules {
+	for _, r := range cfg.DisableRules {
 		disabled[r] = true
 	}
 
@@ -23,12 +23,15 @@ func New(config *config.Config) *Validator {
 	if !disabled["lowercase"] {
 		v.rules = append(v.rules, Lowercase())
 	}
-	if !disabled["special_chars"] {
-		v.rules = append(v.rules, SpecialChars())
-	}
+
 	if !disabled["english"] {
 		v.rules = append(v.rules, English())
 	}
+
+	if !disabled["special_chars"] {
+		v.rules = append(v.rules, SpecialChars())
+	}
+
 	if !disabled["sensitive_data"] {
 		v.rules = append(v.rules, SensitiveData(keywords))
 	}

@@ -49,12 +49,12 @@ func Load() *Config {
 	return cfg
 }
 
-func (c *Config) applyDefaults() {
-	if len(c.Loggers) == 0 {
-		c.Loggers = defaultLoggers
+func (cfg *Config) applyDefaults() {
+	if len(cfg.Loggers) == 0 {
+		cfg.Loggers = defaultLoggers
 	}
-	if len(c.ExtraSensitiveKeywords) == 0 {
-		c.ExtraSensitiveKeywords = defaultSensitiveKeywords
+	if len(cfg.ExtraSensitiveKeywords) == 0 {
+		cfg.ExtraSensitiveKeywords = defaultSensitiveKeywords
 	}
 }
 

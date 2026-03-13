@@ -4,10 +4,10 @@ A Go linter that checks log messages for style and security compliance. Compatib
 
 ## Rules
 
-- **lowercase** — log message must start with a lowercase letter
-- **english** — log message must be in English only
-- **special_chars** — log message must not contain special characters or emoji
-- **sensitive_data** — log message must not contain sensitive data keywords
+- **lowercase** – log message must start with a lowercase letter
+- **english** – log message must be in English only
+- **special_chars** – log message must not contain special characters or emoji
+- **sensitive_data** – log message must not contain sensitive data keywords
 
 ## Supported loggers
 
@@ -19,6 +19,7 @@ A Go linter that checks log messages for style and security compliance. Compatib
 
 - Go 1.22+
 - golangci-lint v2+
+- lefthook
 
 ## Installation
 ```bash
@@ -31,19 +32,20 @@ go mod tidy
 
 Build a custom golangci-lint binary with the plugin:
 ```bash
+cd plugin
 golangci-lint custom
 ```
 
-This will produce a `custom-gcl` binary in the project root.
+This will produce a `custom-gcl` binary in the `plugin` directory.
 
 ## Configuration
 
 Create `config/config.yml`:
 ```yaml
 extra_sensitive_keywords:
-  - ssn
-  - credit_card
-  - cvv
+  - token
+  - token_secret
+  - password
 
 disable_rules: []
 
@@ -85,7 +87,7 @@ CONFIG_PATH=./config/config.yml
 
 Or pass it as a flag:
 ```bash
-./custom-gcl run --config ./config/config.yml ./...
+./plugin/custom-gcl run --config ./config/config.yml ./...
 ```
 
 To disable specific rules:
@@ -105,12 +107,35 @@ extra_sensitive_keywords:
 ## Usage
 ```bash
 # via custom-gcl
-./custom-gcl run ./...
+./plugin/custom-gcl run ./...
 
 # standalone
 go build -o loglinter ./cmd/loglinter/
 ./loglinter ./...
 ```
+
+## Git hooks
+
+Install lefthook:
+```bash
+go install github.com/evilmartians/lefthook@latest
+lefthook install
+```
+
+Runs before every commit automatically:
+```
+golangci-lint run ./...
+go test -v ./...
+```
+
+## CI/CD
+
+CI runs automatically on push to `development` and on pull requests to `main`.
+
+Jobs:
+- **Test** – runs tests with race detector
+- **Lint** – builds custom golangci-lint and runs linter
+- **Build** – builds standalone binary
 
 ## Tests
 ```bash

@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, development ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    container: golang:1.25-alpine
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: go test -v -race ./...
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    container: golang:1.25-alpine
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install golangci-lint
+        run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+
+      - name: Build custom golangci-lint
+        run: golangci-lint custom
+
+      - name: Run linter
+        run: ./custom-gcl run ./...
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    container: golang:1.25-alpine
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build binary
+        run: CGO_ENABLED=0 GOOS=linux go build -o loglinter ./cmd/loglinter/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: loglinter
+          path: loglinter

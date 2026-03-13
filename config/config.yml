@@ -4,6 +4,16 @@ extra_sensitive_keywords:
   - cvv
   - phone
   - address
+  - api_key
+  - api_secret
+  - access_token
+  - refresh_token
+  - client_secret
+  - db_password
+  - connection_string
+  - jwt_secret
+  - webhook_secret
+  - aws_secret
 
 disable_rules: []
 

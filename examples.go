@@ -1,10 +1,9 @@
 package main
 
-import "log/slog"
+import "log"
 
 func main() {
-	slog.Info("Starting server")
-	slog.Info("запуск сервера")
-	slog.Info("server started!")
-	slog.Info("user password exposed")
+	logger := log.Default()
+
+	logger.Print("запуск")
 }
