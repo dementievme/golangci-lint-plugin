@@ -14,19 +14,48 @@ type Config struct {
 	DisableRules           []string                   `yaml:"disable_rules"`
 }
 
-func MustLoad() *Config {
-	config := &Config{}
+var defaultLoggers = map[string]map[string]bool{
+	"log/slog": {
+		"Debug": true, "Info": true, "Warn": true, "Error": true,
+		"DebugContext": true, "InfoContext": true, "WarnContext": true, "ErrorContext": true,
+	},
+	"go.uber.org/zap": {
+		"Debug": true, "Info": true, "Warn": true, "Error": true,
+		"Fatal": true, "Panic": true,
+		"Debugf": true, "Infof": true, "Warnf": true, "Errorf": true,
+		"Fatalf": true, "Panicf": true,
+		"Debugw": true, "Infow": true, "Warnw": true, "Errorw": true,
+		"Fatalw": true, "Panicw": true,
+	},
+	"log": {
+		"Print": true, "Printf": true, "Println": true,
+		"Fatal": true, "Fatalf": true, "Fatalln": true,
+		"Panic": true, "Panicf": true, "Panicln": true,
+	},
+}
 
-	configPath, err := fetchConfigPath()
-	if err != nil {
-		panic(err)
+var defaultSensitiveKeywords = []string{
+	"password", "pwd", "pass", "token", "token_secret", "pwd", "bearer",
+}
+
+func Load() *Config {
+	cfg := &Config{}
+
+	if path, err := fetchConfigPath(); err == nil {
+		_ = cleanenv.ReadConfig(path, cfg)
 	}
 
-	if err := cleanenv.ReadConfig(configPath, config); err != nil {
-		panic(err)
-	}
+	cfg.applyDefaults()
+	return cfg
+}
 
-	return config
+func (c *Config) applyDefaults() {
+	if len(c.Loggers) == 0 {
+		c.Loggers = defaultLoggers
+	}
+	if len(c.ExtraSensitiveKeywords) == 0 {
+		c.ExtraSensitiveKeywords = defaultSensitiveKeywords
+	}
 }
 
 func fetchConfigPath() (string, error) {

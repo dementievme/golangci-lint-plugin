@@ -1,12 +1,15 @@
 package main
 
 import (
-	"fmt"
+	"golang.org/x/tools/go/analysis/singlechecker"
 
+	"github.com/dementievme/golangci-lint-plugin/internal/analyzer"
 	"github.com/dementievme/golangci-lint-plugin/internal/config"
 )
 
 func main() {
-	config := config.MustLoad()
-	fmt.Printf("%v", config)
+	config := config.Load()
+	analyzer := analyzer.New(config)
+
+	singlechecker.Main(analyzer)
 }

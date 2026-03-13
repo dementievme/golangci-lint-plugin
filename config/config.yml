@@ -1,4 +1,3 @@
-# config.yml
 extra_sensitive_keywords:
   - ssn
   - credit_card

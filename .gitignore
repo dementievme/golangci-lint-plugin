@@ -3,3 +3,6 @@
 
 # Env files
 .env
+
+# Build
+custom-gcl

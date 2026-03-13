@@ -1,14 +1,8 @@
-linters-settings:
-  custom:
-    loglinter:
-      path: ./plugin/loglinter.so
-      description: "Checks log messages for style and security violations"
-      original-url: "https://github.com/dementievme/golangci-lint-plugin"
+version: "2"
 
-linters:
-  enable:
-    - loglinter
-    - govet
+plugins:
+  - module: "github.com/dementievme/golangci-lint-plugin"
+    import: "github.com/dementievme/golangci-lint-plugin/plugin"
 
 run:
   timeout: 5m

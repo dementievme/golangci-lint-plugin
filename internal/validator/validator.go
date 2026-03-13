@@ -10,12 +10,8 @@ type Validator struct {
 	rules []Rule
 }
 
-var defaultSensitiveKeywords = []string{
-	"password", "pwd", "pass", "token", "token_secret", "pwd", "bearer",
-}
-
-func NewValidator(config *config.Config) *Validator {
-	keywords := append(defaultSensitiveKeywords, config.ExtraSensitiveKeywords...)
+func New(config *config.Config) *Validator {
+	keywords := config.ExtraSensitiveKeywords
 
 	disabled := make(map[string]bool)
 	for _, r := range config.DisableRules {
