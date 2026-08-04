@@ -6,6 +6,8 @@ import (
 	"unicode"
 )
 
+const allowedPunctuation = ".,;:!?-–—'\"/()"
+
 func Lowercase() Rule {
 	return func(msg string) error {
 		if msg == "" {
@@ -23,7 +25,7 @@ func Lowercase() Rule {
 func English() Rule {
 	return func(msg string) error {
 		for _, r := range msg {
-			if r > unicode.MaxASCII {
+			if unicode.IsLetter(r) && !isLatinLetter(r) {
 				return fmt.Errorf("%w: found: %q", ErrOnlyEnglish, r)
 			}
 		}
@@ -32,12 +34,20 @@ func English() Rule {
 	}
 }
 
+func isLatinLetter(r rune) bool {
+	return (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z')
+}
+
 func SpecialChars() Rule {
 	return func(msg string) error {
 		for _, r := range msg {
-			if strings.ContainsRune("!@#$%^&*()+=[]{}|\\;<>?`~", r) {
-				return fmt.Errorf("%w: found: %q", ErrSpecialChar, r)
+			if unicode.IsLetter(r) || unicode.IsDigit(r) || unicode.IsSpace(r) {
+				continue
 			}
+			if strings.ContainsRune(allowedPunctuation, r) {
+				continue
+			}
+			return fmt.Errorf("%w: found: %q", ErrSpecialChar, r)
 		}
 
 		return nil

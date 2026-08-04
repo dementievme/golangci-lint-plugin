@@ -20,6 +20,6 @@ func testConfig() *config.Config {
 }
 
 func TestAnalyzer(t *testing.T) {
-	a := analyzer.New(testConfig())
+	a := analyzer.NewWithConfig(testConfig())
 	analysistest.Run(t, analysistest.TestData(), a, "examples")
 }

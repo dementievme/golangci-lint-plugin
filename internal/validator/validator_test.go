@@ -49,6 +49,9 @@ func TestEnglish(t *testing.T) {
 		{"запуск сервера", true},
 		{"server started", false},
 		{"ошибка подключения", true},
+		{"server — ok", false},       // em dash is not a letter, allowed
+		{"status: ready", false},      // colon is not a letter, allowed
+		{"server started!", false},    // punctuation is not a letter, allowed
 	}
 
 	for _, tc := range cases {
@@ -70,9 +73,15 @@ func TestSpecialChars(t *testing.T) {
 		fail bool
 	}{
 		{"server started", false},
-		{"server started!", true},
-		{"connection failed!!!", true},
-		{"something went wrong", false},
+		{"server started!", false},         // punctuation is allowed
+		{"status: ok", false},              // colon is allowed
+		{"server — ok", false},             // em dash is allowed
+		{"connection failed", false},
+		{"got @mention", true},             // @ is a special char
+		{"100% done", true},                // % is a special char
+		{"key=value", true},                // = is a special char
+		{"path [0]", true},                 // [ is a special char
+		{"fire 🔥", true},                  // emoji is a special char
 	}
 
 	for _, tc := range cases {
@@ -120,7 +129,7 @@ func TestDisableRules(t *testing.T) {
 
 func TestMultipleErrors(t *testing.T) {
 	v := validator.New(cfg())
-	errs := v.Validate("Starting server!")
+	errs := v.Validate("Запуск server")
 	if len(errs) < 2 {
 		t.Errorf("expected at least 2 errors, got %d", len(errs))
 	}

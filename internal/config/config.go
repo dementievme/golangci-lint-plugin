@@ -1,11 +1,10 @@
 package config
 
 import (
-	"flag"
+	"log"
 	"os"
 
 	"github.com/ilyakaznacheev/cleanenv"
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -35,14 +34,20 @@ var defaultLoggers = map[string]map[string]bool{
 }
 
 var defaultSensitiveKeywords = []string{
-	"password", "pwd", "pass", "token", "token_secret", "pwd", "bearer",
+	"password", "pwd", "pass", "token", "token_secret", "bearer",
 }
 
-func Load() *Config {
+func Load(path string) *Config {
 	cfg := &Config{}
 
-	if path, err := fetchConfigPath(); err == nil {
-		_ = cleanenv.ReadConfig(path, cfg)
+	if path == "" {
+		path = os.Getenv("CONFIG_PATH")
+	}
+
+	if path != "" {
+		if err := cleanenv.ReadConfig(path, cfg); err != nil {
+			log.Printf("loglinter: warning: failed to read config %s: %v", path, err)
+		}
 	}
 
 	cfg.applyDefaults()
@@ -53,29 +58,20 @@ func (cfg *Config) applyDefaults() {
 	if len(cfg.Loggers) == 0 {
 		cfg.Loggers = defaultLoggers
 	}
-	if len(cfg.ExtraSensitiveKeywords) == 0 {
-		cfg.ExtraSensitiveKeywords = defaultSensitiveKeywords
+
+	seen := make(map[string]bool)
+	var merged []string
+	for _, kw := range defaultSensitiveKeywords {
+		if !seen[kw] {
+			seen[kw] = true
+			merged = append(merged, kw)
+		}
 	}
-}
-
-func fetchConfigPath() (string, error) {
-	_ = godotenv.Load()
-
-	var configPath string
-	flag.StringVar(&configPath, "config", "", "path to config file")
-	flag.Parse()
-
-	if configPath != "" {
-		return configPath, nil
+	for _, kw := range cfg.ExtraSensitiveKeywords {
+		if !seen[kw] {
+			seen[kw] = true
+			merged = append(merged, kw)
+		}
 	}
-
-	configPath, found := os.LookupEnv("CONFIG_PATH")
-	if !found {
-		return "", ErrPathNotSpecified
-	}
-	if configPath == "" {
-		return "", ErrConfigPathIsEmpty
-	}
-
-	return configPath, nil
+	cfg.ExtraSensitiveKeywords = merged
 }

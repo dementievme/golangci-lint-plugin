@@ -5,8 +5,8 @@ A Go linter that checks log messages for style and security compliance. Compatib
 ## Rules
 
 - **lowercase** – log message must start with a lowercase letter
-- **english** – log message must be in English only
-- **special_chars** – log message must not contain special characters or emoji
+- **english** – log message must contain only English (Latin) letters; digits, spaces and punctuation are allowed
+- **special_chars** – log message must not contain special characters or emoji; standard punctuation `.,;:!?-–—'"()` is allowed
 - **sensitive_data** – log message must not contain sensitive data keywords
 
 ## Supported loggers
@@ -17,7 +17,7 @@ A Go linter that checks log messages for style and security compliance. Compatib
 
 ## Requirements
 
-- Go 1.22+
+- Go 1.25+
 - golangci-lint v2+
 - lefthook
 
@@ -43,9 +43,8 @@ This will produce a `custom-gcl` binary in the `plugin` directory.
 Create `config/config.yml`:
 ```yaml
 extra_sensitive_keywords:
-  - token
-  - token_secret
-  - password
+  - ssn
+  - credit_card
 
 disable_rules: []
 
@@ -64,20 +63,30 @@ loggers:
     Info: true
     Warn: true
     Error: true
+    Fatal: true
+    Panic: true
     Debugf: true
     Infof: true
     Warnf: true
     Errorf: true
+    Fatalf: true
+    Panicf: true
     Debugw: true
     Infow: true
     Warnw: true
     Errorw: true
+    Fatalw: true
+    Panicw: true
   log:
     Print: true
     Printf: true
     Println: true
     Fatal: true
+    Fatalf: true
+    Fatalln: true
     Panic: true
+    Panicf: true
+    Panicln: true
 ```
 
 Set the config path via `.env` in the project root:
@@ -85,9 +94,9 @@ Set the config path via `.env` in the project root:
 CONFIG_PATH=./config/config.yml
 ```
 
-Or pass it as a flag:
+Or pass it as a flag (standalone mode):
 ```bash
-./plugin/custom-gcl run --config ./config/config.yml ./...
+./loglinter -config ./config/config.yml ./...
 ```
 
 To disable specific rules:
@@ -97,12 +106,14 @@ disable_rules:
   - special_chars
 ```
 
-To add custom sensitive keywords:
+To add custom sensitive keywords (these are **added** to the built-in list, not replacing it):
 ```yaml
 extra_sensitive_keywords:
   - ssn
   - credit_card
 ```
+
+Built-in sensitive keywords: `password`, `pwd`, `pass`, `token`, `token_secret`, `bearer`.
 
 ## Usage
 ```bash
@@ -111,8 +122,14 @@ extra_sensitive_keywords:
 
 # standalone
 go build -o loglinter ./cmd/loglinter/
-./loglinter ./...
+./loglinter -config ./config/config.yml ./...
 ```
+
+## Limitations
+
+- Only **string literals** are checked. Messages passed as variables, constants or concatenations are not analyzed.
+- Only direct method calls like `slog.Info(...)` are recognized. Chained calls (`slog.With(...).Info(...)`) and calls through variables (`logger.Info(...)`) are not detected.
+- The plugin requires **rebuilding golangci-lint** via `golangci-lint custom`. There is no way to use a custom plugin with a stock golangci-lint binary.
 
 ## Git hooks
 
